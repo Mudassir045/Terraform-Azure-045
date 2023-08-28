@@ -19,3 +19,13 @@ resource "azurerm_resource_group" "mudassir" {
   name     = "mudassir"
   location = "North Europe"
 }
+
+
+resource "azurerm_storage_account" "mudassir4257494653" {
+  name                     = "mudassir4257494653"
+  resource_group_name      = "mudassir"
+  location                 = "North Europe"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  account_kind = "StorageV2"
+}
