@@ -35,3 +35,4 @@ resource "azurerm_storage_container" "mudassir" {
   storage_account_name  = "mudassir4257494653"
   container_access_type = "blob"
 }
+
