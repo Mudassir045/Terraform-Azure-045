@@ -29,3 +29,10 @@ resource "azurerm_storage_account" "mudassir4257494653" {
   account_replication_type = "LRS"
   account_kind = "StorageV2"
 }
+
+resource "azurerm_storage_container" "mudassir" {
+  name                  = "mudassir"
+  storage_account_name  = "mudassir4257494653"
+  container_access_type = "blob"
+}
+
