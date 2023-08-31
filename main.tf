@@ -16,7 +16,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "mudassir" {
-  name     = "THG-DEV-RG"
+  name     = "THG-DEV-RG-01"
   location = "North Europe"
 }
 
