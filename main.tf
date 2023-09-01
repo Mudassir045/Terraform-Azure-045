@@ -1,20 +1,58 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source = "hashicorp/azurerm"
-      version = "3.68.0"
-    }
+resource "azurerm_resource_group" "mudassir" {
+  name     = var.resource_group_name
+  location = var.location  
+}
+
+resource "azurerm_virtual_network" "mudassir" {
+  name                = var.virtual_network_name
+  location            = var.location  
+  resource_group_name = var.resource_group_name
+  address_space       = [var.virtual_network_address_space]
+  depends_on = [
+    azurerm_resource_group.mudassir
+  ]  
+} 
+
+
+resource "azurerm_subnet" "mudassir" {    
+    name                 = "SubnetA"
+    resource_group_name  = var.resource_group_name
+    virtual_network_name = var.virtual_network_name
+    address_prefixes     = ["10.0.0.0/24"]
+    depends_on = [
+      azurerm_virtual_network.mudassir
+    ]
+}
+
+resource "azurerm_network_security_group" "mudassir" {
+  name                = "DEV-NSG-01"
+  location            = var.location 
+  resource_group_name = var.resource_group_name
+
+  security_rule {
+    name                       = "AllowRDP"
+    priority                   = 300
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3389"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
+
+depends_on = [
+    azurerm_virtual_network.mudassir
+  ]
 }
 
+resource "azurerm_subnet_network_security_group_association" "mudassir" {  
+  subnet_id                 = azurerm_subnet.mudassir.id
+  network_security_group_id = azurerm_network_security_group.mudassir.id
 
-provider "azurerm" {
-  subscription_id = "5aa7b37c-2e4b-470e-95ce-f29c458a6f50"
-  client_id       = "ab3d0e89-5bbe-48f1-88ad-f61358fcb662"
-  client_secret   = "GFD8Q~SN2M5yrkK6g1ZpMknaH3jSkhJr4W0sBa0M"
-  tenant_id       = "1d3bdd24-8ca7-4b5a-9984-6d3cd45ee2c4"
-  features {}
+  depends_on = [
+    azurerm_virtual_network.mudassir,
+    azurerm_network_security_group.mudassir
+  ]
 }
-
-
 
