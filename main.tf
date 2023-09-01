@@ -7,6 +7,7 @@ terraform {
   }
 }
 
+
 provider "azurerm" {
   subscription_id = "5aa7b37c-2e4b-470e-95ce-f29c458a6f50"
   client_id       = "ab3d0e89-5bbe-48f1-88ad-f61358fcb662"
