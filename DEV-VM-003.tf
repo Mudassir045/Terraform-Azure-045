@@ -1,6 +1,6 @@
 
-resource "azurerm_network_interface" "DEV-VM-001-nic" {
-  name                = "DEV-VM-001-nic"
+resource "azurerm_network_interface" "DEV-VM-003-nic" {
+  name                = "DEV-VM-003-nic"
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -12,15 +12,15 @@ resource "azurerm_network_interface" "DEV-VM-001-nic" {
   depends_on = [ azurerm_subnet.mudassir ]
 }
 
-resource "azurerm_windows_virtual_machine" "DEV-VM-001" {
-  name                = "DEV-VM-001"
+resource "azurerm_windows_virtual_machine" "DEV-VM-003" {
+  name                = "DEV-VM-003"
   resource_group_name = var.resource_group_name
   location            = var.location
   size                = "Standard_F2"
   admin_username      = var.admin_username
   admin_password      = var.admin_password
   network_interface_ids = [
-    azurerm_network_interface.DEV-VM-001-nic.id,
+    azurerm_network_interface.DEV-VM-003-nic.id,
   ]
 
   os_disk {
@@ -34,6 +34,6 @@ resource "azurerm_windows_virtual_machine" "DEV-VM-001" {
     sku       = "2016-Datacenter"
     version   = "latest"
   }
-  depends_on = [ azurerm_network_interface.DEV-VM-001-nic,
+  depends_on = [ azurerm_network_interface.DEV-VM-003-nic,
   azurerm_resource_group.mudassir ]
 }
