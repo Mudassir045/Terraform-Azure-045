@@ -12,7 +12,7 @@ resource "azurerm_network_interface" "DEV-VM-002-nic" {
   depends_on = [ azurerm_subnet.mudassir ]
 }
 
-resource "azurerm_windows_virtual_machine" "mudassir" {
+resource "azurerm_windows_virtual_machine" "DEV-VM-002" {
   name                = "DEV-VM-002"
   resource_group_name = var.resource_group_name
   location            = var.location
