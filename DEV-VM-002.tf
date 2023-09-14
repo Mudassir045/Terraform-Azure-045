@@ -1,5 +1,5 @@
 
-resource "azurerm_network_interface" "mudassir" {
+resource "azurerm_network_interface" "DEV-VM-002-nic" {
   name                = "DEV-VM-002-nic"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -20,7 +20,7 @@ resource "azurerm_windows_virtual_machine" "mudassir" {
   admin_username      = var.admin_username
   admin_password      = var.admin_password
   network_interface_ids = [
-    azurerm_network_interface.mudassir.id,
+    azurerm_network_interface.DEV-VM-002-nic.id,
   ]
 
   os_disk {
@@ -34,6 +34,6 @@ resource "azurerm_windows_virtual_machine" "mudassir" {
     sku       = "2016-Datacenter"
     version   = "latest"
   }
-  depends_on = [ azurerm_network_interface.mudassir,
+  depends_on = [ azurerm_network_interface.DEV-VM-002-nic,
   azurerm_resource_group.mudassir ]
 }
