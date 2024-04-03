@@ -1,0 +1,99 @@
+trigger:
+  branches:
+    include:
+      - main
+      # Add other branches as needed
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureSubscription: '<Azure Subscription Name>'
+  azureResourceGroup: '<Azure Resource Group Name>'
+  terraformWorkingDirectory: '/'
+  terraformBackendStorageAccountName: '<Storage Account Name for Terraform Backend>'
+  terraformBackendContainerName: '<Container Name for Terraform Backend>'
+  terraformBackendKey: '<Key for Terraform Backend State File>'
+  terraformInitArgs: '-backend-config="storage_account_name=$(terraformBackendStorageAccountName)" -backend-config="container_name=$(terraformBackendContainerName)" -backend-config="key=$(terraformBackendKey)"'
+
+stages:
+- stage: Initialize
+  jobs:
+  - job: InitTerraform
+    displayName: 'Initialize Terraform'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+    - task: TerraformInstaller@0
+      inputs:
+        terraformVersion: 'latest'
+    - script: |
+        cd $(terraformWorkingDirectory)
+        terraform init $(terraformInitArgs)
+      displayName: 'Terraform Init'
+
+- stage: Validate
+  dependsOn: Initialize
+  jobs:
+  - job: ValidateTerraform
+    displayName: 'Validate Terraform Configuration'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+    - script: |
+        cd $(terraformWorkingDirectory)
+        terraform validate
+      displayName: 'Terraform Validate'
+
+- stage: Plan
+  dependsOn: Validate
+  jobs:
+  - job: PlanTerraform
+    displayName: 'Plan Terraform Changes'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+    - script: |
+        cd $(terraformWorkingDirectory)
+        terraform plan -out=tfplan
+      displayName: 'Terraform Plan'
+
+- stage: Approve
+  dependsOn: Plan
+  jobs:
+  - deployment: 'ManualApproval'
+    displayName: 'Manual Approval'
+    environment: 'Production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: ManualValidation@0
+            displayName: 'Manual Validation'
+            inputs:
+              instructions: 'Review Terraform plan and approve or reject.'
+              notifyUsers: |
+                me@example.com
+              timeoutInMinutes: 4320 # 3 days
+              onTimeout: 'reject'
+
+- stage: Apply
+  dependsOn: Approve
+  jobs:
+  - job: ApplyTerraform
+    displayName: 'Apply Terraform Changes'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+    - script: |
+        cd $(terraformWorkingDirectory)
+        terraform apply -auto-approve tfplan
+      displayName: 'Terraform Apply'
