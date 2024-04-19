@@ -11,12 +11,7 @@ resource "azurerm_storage_account" "mudassir" {
   depends_on = [ azurerm_resource_group.mudassir]
 }
 
-resource "azurerm_storage_container" "mudassir" {
-  name                  = "container22"
-  storage_account_name  = azurerm_storage_account.mudassir.name
-  container_access_type = "private"
-  depends_on = [ azurerm_storage_account.mudassir ]
-}
+
 
 resource "azurerm_storage_container" "mudassir1" {
   count = 1
