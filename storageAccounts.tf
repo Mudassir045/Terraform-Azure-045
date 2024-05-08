@@ -14,7 +14,7 @@ resource "azurerm_storage_account" "mudassir" {
 
 
 resource "azurerm_storage_container" "mudassir1" {
-  count = 200
+  count = 10
   name                  = format("container%s", count.index)
   storage_account_name  = azurerm_storage_account.mudassir.name
   container_access_type = "private"
